@@ -1,0 +1,7 @@
+{
+  "database": "dolt",
+  "backend": "dolt",
+  "dolt_mode": "embedded",
+  "dolt_database": "coach_connect",
+  "project_id": "4919c229-c50c-4bfb-9209-d52e674d43b0"
+}
