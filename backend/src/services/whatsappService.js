@@ -1,4 +1,5 @@
 import { EventEmitter } from "node:events";
+import fs from "node:fs";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 import QRCode from "qrcode";
@@ -8,6 +9,28 @@ const { Client, LocalAuth } = pkg;
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const AUTH_DATA_PATH = path.join(__dirname, "..", "..", "data", "wwebjs_auth");
+
+const SINGLETON_LOCK_NAMES = new Set(["SingletonLock", "SingletonCookie", "SingletonSocket"]);
+
+// On a container restart/redeploy, Chromium's previous process never got to clean up
+// its own profile lock — since this is always a fresh process, any lock left over from
+// before is guaranteed stale, and leaving it in place makes Chromium refuse to launch.
+function clearStaleChromiumLocks(dir) {
+  let entries;
+  try {
+    entries = fs.readdirSync(dir, { withFileTypes: true });
+  } catch {
+    return; // directory doesn't exist yet — nothing to clean
+  }
+  for (const entry of entries) {
+    const fullPath = path.join(dir, entry.name);
+    if (SINGLETON_LOCK_NAMES.has(entry.name)) {
+      fs.rmSync(fullPath, { force: true });
+    } else if (entry.isDirectory()) {
+      clearStaleChromiumLocks(fullPath);
+    }
+  }
+}
 
 // Never send from a personal number — this session must only ever be scanned in with
 // the dedicated CoachConnect SIM (see CLAUDE.md / planning.md "golden rule").
@@ -21,6 +44,8 @@ class WhatsAppService extends EventEmitter {
 
   init() {
     if (this.client) return;
+
+    clearStaleChromiumLocks(AUTH_DATA_PATH);
 
     this.client = new Client({
       authStrategy: new LocalAuth({ dataPath: AUTH_DATA_PATH }),
