@@ -1,0 +1,68 @@
+// CoachConnect data model.
+// SQLite now (single coach, 9 schools); swap the datasource to Postgres
+// when Step 5 (multi-coach) happens — Prisma migrations carry over.
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id           Int      @id @default(autoincrement())
+  email        String   @unique
+  passwordHash String
+  createdAt    DateTime @default(now())
+}
+
+model School {
+  id        Int      @id @default(autoincrement())
+  name      String
+  groupId   String?  @unique // WhatsApp group JID, e.g. "1203630...@g.us" — set once connected
+  createdAt DateTime @default(now())
+
+  scheduleEntries ScheduleEntry[]
+  messageLogs     MessageLog[]
+}
+
+// SQLite has no native enum support, so occasion/status are plain strings.
+// Valid occasions: MONDAY_MOTIVATION | SESSION_REMINDER | THANK_YOU_FOLLOWUP | CUSTOM
+model Template {
+  id        Int      @id @default(autoincrement())
+  title     String
+  occasion  String   @default("CUSTOM")
+  body      String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  scheduleEntries ScheduleEntry[]
+}
+
+// Recurring send rule: "every Monday at 08:00, send template X to all schools (or a subset)"
+model ScheduleEntry {
+  id         Int      @id @default(autoincrement())
+  templateId Int
+  template   Template @relation(fields: [templateId], references: [id])
+  schoolId   Int?     // null = all schools
+  school     School?  @relation(fields: [schoolId], references: [id])
+  dayOfWeek  Int      // 0=Sunday .. 6=Saturday
+  hour       Int      // 0-23, local server time
+  minute     Int      @default(0)
+  active     Boolean  @default(true)
+  createdAt  DateTime @default(now())
+}
+
+// status: "SENT" | "FAILED"
+model MessageLog {
+  id         Int       @id @default(autoincrement())
+  schoolId   Int
+  school     School    @relation(fields: [schoolId], references: [id])
+  body       String
+  status     String
+  error      String?
+  sentAt     DateTime  @default(now())
+  triggeredBy String   // "schedule" | "send-now"
+}

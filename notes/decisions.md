@@ -69,3 +69,27 @@
 **Ruled out:**
 - Renaming the existing directory-documentation `SKILL.md` files — left as-is since they serve a different, still-useful purpose (folder context, not invokable procedures); revisit only if the name collision causes real confusion.
 - Also extracting a `close-session` skill from the `session-closer` agent — ruled out because session close needs judgment calls (what to file, what's actually done) that don't reduce well to a fixed procedure; kept as a full agent instead.
+
+---
+
+## 7. Build Steps 3 & 4 (the Real App) Before Step 2 Finishes
+
+**Decided:** Start building the full web app (login, WhatsApp QR connect, schools, templates, schedule, sent log, AI draft helper, Send Now) now, in parallel with the still-in-progress Step 2 Make.com proof, rather than waiting for Step 2 to be validated first.
+
+**Why:** Maroof explicitly asked to move to building the full application now that the planning artifacts were in place. Planning.md's own "Suggested Order" recommends finishing Steps 1+2 first, but that guidance is a default, not a hard gate — this was a deliberate, informed call to reorder rather than an oversight.
+
+**Ruled out:**
+- Refusing/delaying until Step 2 was proven — rejected because the request was explicit and the two tracks (a Make.com proof-of-concept and the real app) don't actually block each other technically.
+
+---
+
+## 8. App Stack: React+Vite / Node+Express+Prisma+SQLite / whatsapp-web.js
+
+**Decided:** Frontend is React+Vite; backend is Express with Prisma ORM over SQLite; the WhatsApp layer uses `whatsapp-web.js` (QR-based, unofficial) wired for real rather than stubbed; AI drafting calls the Claude API directly, reusing `.claude/skills/draft-message/SKILL.md` as its system prompt so the app and the agents can't drift apart.
+
+**Why:** Maroof deferred all three stack choices to my judgment. SQLite-via-Prisma keeps solo-scale deploy trivial while leaving a clean migration path to Postgres for Step 5 (multi-coach). whatsapp-web.js was chosen because planning.md is explicit that only the unofficial "scan QR code" method reaches WhatsApp *groups* at all — there's no official API path that fits the plan as written. Real integration (not a stub) was chosen since it's the actual core value of Step 3.
+
+**Ruled out:**
+- Plain HTML/CSS/JS frontend — rejected in favor of React for maintainability as the feature set grows toward Step 5.
+- PostgreSQL now — rejected as unnecessary setup overhead for a single coach at 9 schools.
+- Stubbing the WhatsApp layer behind a mock — rejected because a fake sender would leave the app's actual reason for existing untested; the real integration was built instead (it still needs a phone to scan the QR code, which no agent can do).

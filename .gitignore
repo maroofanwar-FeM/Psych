@@ -3,3 +3,9 @@
 .dolt/
 *.db
 .beads-credential-key
+
+# App (backend + frontend)
+node_modules/
+.env
+backend/data/wwebjs_auth/
+frontend/dist/

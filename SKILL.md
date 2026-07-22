@@ -4,19 +4,21 @@
 
 CoachConnect is a WhatsApp automation tool for **Maroof Anwar**, a CPD Coach at NIETE who manages 9 school groups. The goal: send the right message (Monday motivation, session reminder, thank-you follow-up) to the right group at the right time — automatically, without manual effort.
 
-This is a **no-code automation project** at its current stage, not a software codebase. There is no application code to compile or test. The "product" is a configured Make.com scenario reading from a Google Sheet.
+This now includes a real application codebase (`backend/` + `frontend/`) alongside the no-code Make.com proof — see below.
 
 ---
 
-## Current Phase: Step 2 of 5
+## Current Phase: Steps 2 & 3 of 5 (in parallel)
 
 | Step | Description | Status |
 |---|---|---|
 | 1 | Get spare SIM, add to 9 school WhatsApp groups | Open |
 | 2 | Prove automation with Make.com + Google Sheets | **In Progress** |
-| 3 | Build real web app (login, QR, schedule, templates) | Not started |
-| 4 | Add AI message drafting + broadcast button | Not started |
+| 3 | Build real web app (login, QR, schedule, templates) | **Scaffolded** — `backend/` (Express+Prisma/SQLite+whatsapp-web.js) and `frontend/` (React+Vite) exist and run; still needs the spare-SIM QR scan (Step 1) to actually go live |
+| 4 | Add AI message drafting + broadcast button | **Scaffolded** — AI draft helper (Templates page) and Send Now (Dashboard) are built |
 | 5 | Open platform to other NIETE coaches | Not started |
+
+See `README.md` for how to run the app locally or with Docker.
 
 ---
 
