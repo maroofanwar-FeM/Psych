@@ -47,7 +47,7 @@ Coach Connect/
 │   └── SKILL.md          ← Agent rules context
 ├── notes/
 │   ├── planning.md       ← The 5-step project plan (source of truth)
-│   ├── feedback_loop.md  ← How the project improves over time
+│   ├── agent_loop.md     ← How the project improves over time
 │   ├── memory.md         ← Lessons learned (dated table)
 │   ├── decisions.md      ← Decision log (what / why / ruled-out)
 │   └── SKILL.md          ← Notes conventions context

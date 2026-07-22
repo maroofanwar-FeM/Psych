@@ -8,7 +8,7 @@ Coach Connect/
 │   └── CLAUDE.md           # Project-specific Claude rules (purpose, constraints, tone)
 ├── notes/                  # My notes, plans, and work journal
 │   ├── planning.md         # The 5-step project plan
-│   ├── feedback_loop.md    # How the project improves over time
+│   ├── agent_loop.md       # How the project improves over time
 │   ├── memory.md           # Lessons learned journal (dated entries)
 │   └── decisions.md        # Decision log (what / why / ruled-out)
 ├── data/                   # Raw data and exports
