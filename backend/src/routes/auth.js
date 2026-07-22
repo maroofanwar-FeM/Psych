@@ -7,7 +7,10 @@ import { requireAuth } from "../middleware/auth.js";
 export const authRouter = Router();
 
 const COOKIE_NAME = "coachconnect_session";
-const isProd = process.env.NODE_ENV === "production";
+// Frontend and backend are separate hosts in production (e.g. two Railway services),
+// so the session cookie must be SameSite=None — which browsers only allow over HTTPS.
+// Local dev stays same-origin (Vite's dev-server proxy), so it doesn't need this.
+const crossOrigin = process.env.COOKIE_CROSS_ORIGIN === "true";
 
 authRouter.post("/login", async (req, res) => {
   const { email, password } = req.body ?? {};
@@ -26,8 +29,8 @@ authRouter.post("/login", async (req, res) => {
 
   res.cookie(COOKIE_NAME, token, {
     httpOnly: true,
-    secure: isProd,
-    sameSite: "lax",
+    secure: crossOrigin,
+    sameSite: crossOrigin ? "none" : "lax",
     maxAge: 30 * 24 * 60 * 60 * 1000,
   });
   res.json({ email: user.email });

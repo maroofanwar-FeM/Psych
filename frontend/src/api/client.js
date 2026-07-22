@@ -1,5 +1,9 @@
+// Empty in local `npm run dev` (Vite's dev-server proxy keeps it same-origin);
+// set at Docker build time in production, since frontend and backend are separate hosts.
+const API_BASE = import.meta.env.VITE_API_BASE_URL || "";
+
 async function request(path, options = {}) {
-  const res = await fetch(`/api${path}`, {
+  const res = await fetch(`${API_BASE}/api${path}`, {
     credentials: "include",
     headers: { "Content-Type": "application/json", ...options.headers },
     ...options,

@@ -9,15 +9,24 @@ services:
     restart: unless-stopped
 
   frontend:
-    build: ./frontend
-    environment:
-      BACKEND_HOST: backend
-      BACKEND_PORT: 4000
+    build:
+      context: ./frontend
+      # The browser runs on the host machine, not inside Docker's network, so it
+      # must reach the backend via its published port on localhost — not the
+      # "backend" service name (that only resolves inside Docker's network).
+      args:
+        VITE_API_BASE_URL: http://localhost:4000
     depends_on:
       - backend
     ports:
       - "8080:80"
     restart: unless-stopped
 
+# Note: frontend (localhost:8080) and backend (localhost:4000) are different
+# origins even locally, so login requires COOKIE_CROSS_ORIGIN=true — which in
+# turn requires HTTPS (browsers reject SameSite=None cookies without Secure).
+# Plain `docker compose up` here is fine for checking builds, but for testing
+# the login flow locally, use `npm run dev` in both backend/ and frontend/
+# instead (Vite's dev-server proxy keeps everything same-origin).
 volumes:
   backend-data:

@@ -106,3 +106,15 @@
 - Vercel/Netlify (serverless) — ruled out outright, incompatible with a persistent WhatsApp session.
 - A DigitalOcean/Hetzner VPS running `docker-compose` directly — ruled out in favor of less ongoing maintenance, even though it needed zero code changes; revisit if Railway's cost or limits become a problem at Step 5 scale.
 - Render — similar fit to Railway, but its free tier sleeps on inactivity (would drop the WhatsApp session) and persistent disks need a paid plan anyway, so it has no real edge over Railway here.
+
+---
+
+## 10. Frontend Calls the Backend's Public URL Directly, Not Through nginx/Private Networking
+
+**Decided:** Mid-deployment, dropped the original design (frontend's nginx reverse-proxies `/api` to the backend over Railway's private network) in favor of the frontend calling the backend's public HTTPS URL directly, baked in at build time via `VITE_API_BASE_URL`. This makes the login cookie cross-origin, so it's now `SameSite=None; Secure` behind a `COOKIE_CROSS_ORIGIN=true` flag.
+
+**Why:** While actually deploying, nginx failed to resolve `backend.railway.internal` at container start ("host not found in upstream") even though Railway's API reported the private network endpoint as ready — likely a resolver-configuration gap between nginx's default DNS setup and Railway's private network, not something worth debugging blind through slow rebuild/redeploy cycles. Calling the backend's public URL directly sidesteps private networking entirely, is easy to verify (curl the URL), and works identically on any host — not just Railway.
+
+**Ruled out:**
+- Continuing to debug the nginx private-network resolver — rejected because each attempt costs a full rebuild+redeploy cycle with no way to inspect Railway's internal DNS directly, versus a fix that could be verified immediately.
+- Keeping same-origin cookies by finding another way to unify origins (e.g. a single combined service) — rejected as a bigger restructuring than the problem warranted; cross-origin cookies over HTTPS are a well-supported, standard pattern.
