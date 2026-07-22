@@ -93,3 +93,16 @@
 - Plain HTML/CSS/JS frontend — rejected in favor of React for maintainability as the feature set grows toward Step 5.
 - PostgreSQL now — rejected as unnecessary setup overhead for a single coach at 9 schools.
 - Stubbing the WhatsApp layer behind a mock — rejected because a fake sender would leave the app's actual reason for existing untested; the real integration was built instead (it still needs a phone to scan the QR code, which no agent can do).
+
+---
+
+## 9. Deploy on Railway, Not Serverless or a Bare VPS
+
+**Decided:** Deploy `backend/` and `frontend/` as two Railway services from the GitHub repo, with a persistent Volume on the backend for the SQLite DB and WhatsApp session.
+
+**Why:** whatsapp-web.js needs an always-on process (serverless platforms like Vercel/Netlify kill or cold-start functions, which would drop the WhatsApp connection) and a persistent disk across restarts (the QR login and message history live there). Railway gives both, plus GitHub auto-deploy and a dashboard for env vars/logs — a bare VPS would match the existing `docker-compose.yml` more exactly but puts Maroof in charge of SSH access, OS patching, and security, which is unnecessary ongoing burden for a single-user tool.
+
+**Ruled out:**
+- Vercel/Netlify (serverless) — ruled out outright, incompatible with a persistent WhatsApp session.
+- A DigitalOcean/Hetzner VPS running `docker-compose` directly — ruled out in favor of less ongoing maintenance, even though it needed zero code changes; revisit if Railway's cost or limits become a problem at Step 5 scale.
+- Render — similar fit to Railway, but its free tier sleeps on inactivity (would drop the WhatsApp session) and persistent disks need a paid plan anyway, so it has no real edge over Railway here.
