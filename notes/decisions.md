@@ -35,3 +35,37 @@
 **Ruled out:**
 - Section-per-entry format with headers — too verbose.
 - Narrative journal style — too informal and hard to scan.
+
+---
+
+## 4. Per-Directory SKILL.md Context Files + Autonomous Agents
+
+**Decided:** Add a `SKILL.md` to each major folder (root, `notes/`, `instructions/`) documenting what lives there and how to work with it, and add three autonomous agent definitions under `.claude/agents/`: `issue-triage`, `message-drafter`, `session-closer`.
+
+**Why:** As the project grew across folders, an AI agent starting fresh had no quick way to know what each folder was for or which conventions to follow. The three agents cover the recurring session tasks (status triage, message drafting, session close) so they don't need to be re-explained each time.
+
+**Ruled out:**
+- One giant root-level context file — rejected because it doesn't travel with the folder it describes, and gets out of sync as folders change independently.
+
+---
+
+## 5. Renamed feedback_loop.md to agent_loop.md
+
+**Decided:** Rename `notes/feedback_loop.md` to `notes/agent_loop.md` and update all references (structure.md, SKILL.md files).
+
+**Why:** The file describes how the *project* improves through send → observe → adjust → repeat, but the name "feedback_loop" was easy to confuse with user/customer feedback specifically. "agent_loop" better reflects that this is the loop an AI agent runs each cycle.
+
+**Ruled out:**
+- Keeping the original name — rejected after it caused confusion about whether the file was about customer feedback or the iteration process.
+
+---
+
+## 6. Real `.claude/skills/` Folder for Reusable Agent Skills
+
+**Decided:** Add `.claude/skills/draft-message/SKILL.md` and `.claude/skills/log-decision/SKILL.md` as actual invokable Claude Code skills, extracted from logic that previously lived only inside the `message-drafter` and `session-closer` agent definitions.
+
+**Why:** The project had three files named `SKILL.md` (root, `notes/`, `instructions/`) but none were real Claude Code skills — they were directory documentation that happened to share the name. Message-drafting rules and decision-log formatting were recurring, well-defined procedures duplicated only inside agent prompts, with no single source of truth and no way to invoke them without spinning up a full agent.
+
+**Ruled out:**
+- Renaming the existing directory-documentation `SKILL.md` files — left as-is since they serve a different, still-useful purpose (folder context, not invokable procedures); revisit only if the name collision causes real confusion.
+- Also extracting a `close-session` skill from the `session-closer` agent — ruled out because session close needs judgment calls (what to file, what's actually done) that don't reduce well to a fixed procedure; kept as a full agent instead.

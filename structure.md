@@ -26,6 +26,8 @@ Hidden (auto-managed, do not edit by hand):
 ├── .git/                   # Git history
 ├── .gitignore              # Git ignore rules
 └── .claude/                # Claude Code settings
+    ├── agents/             # Autonomous agent definitions
+    └── skills/             # Reusable skills (draft-message, log-decision)
 ```
 
 ## Where Things Live

@@ -54,7 +54,8 @@ Coach Connect/
 ├── data/                 ← Raw data, Google Sheet exports, school lists
 └── .claude/
     ├── settings.json     ← Hooks: bd prime on SessionStart + PreCompact
-    └── agents/           ← Autonomous agent definitions
+    ├── agents/           ← Autonomous agent definitions
+    └── skills/           ← Reusable skills (draft-message, log-decision)
 ```
 
 ---

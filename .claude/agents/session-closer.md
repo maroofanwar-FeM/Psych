@@ -50,6 +50,10 @@ Add a row to `notes/memory.md` for each significant lesson from this session:
 
 Keep it to one sentence per lesson. Only log things that would have surprised you at the start of the session.
 
+### Step 4b — Log Any Real Decisions
+
+If this session involved choosing between alternatives (a tool, a format, a structural change), use the `log-decision` skill (`.claude/skills/log-decision/SKILL.md`) to append a properly formatted entry to `notes/decisions.md`. Don't log routine work — only decisions with a *why* worth preserving.
+
 ### Step 5 — Commit All Changes
 
 Stage and commit everything:
