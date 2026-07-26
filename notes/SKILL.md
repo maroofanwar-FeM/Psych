@@ -13,7 +13,7 @@ This folder contains all human-readable project notes, plans, and journals for C
 | `planning.md` | The canonical 5-step project plan | Prose with step headers |
 | `decisions.md` | Log of significant decisions | Section per decision (see format below) |
 | `memory.md` | Lessons learned journal | Table: Date / Task / Lesson Learned |
-| `agent_loop.md` | How the project improves over time | Short prose, 4-step loop |
+| `agent_loop.md` | The 5-step agent loop (perceive/plan/act/reflect/learn) + chatbot-vs-agent distinction | Short prose |
 
 ---
 
@@ -62,7 +62,7 @@ Do not add new steps to the plan without Maroof's agreement.
 - **Log a lesson**: append a row to `memory.md` after completing a task.
 - **Log a decision**: add a new numbered section to `decisions.md`.
 - **Check current phase**: read `planning.md` to see which step is active.
-- **Review feedback loop**: read `agent_loop.md` to understand how improvements are made.
+- **Review the agent loop**: read `agent_loop.md` for the 5-step loop and the chatbot-vs-agent distinction.
 
 ---
 
