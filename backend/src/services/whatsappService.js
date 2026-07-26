@@ -85,16 +85,19 @@ class WhatsAppService extends EventEmitter {
       this.emit("status", this.status);
     });
 
-    this.client.on("message", async (msg) => {
-      if (!msg.from.endsWith("@g.us")) return;
-      if (this.seenGroups.has(msg.from)) return;
+    // "message" only fires for messages received from others; a message the
+    // CoachConnect number sends itself only fires "message_create" — needed since
+    // the natural way to "ping" a group to discover its ID is to send a test message.
+    this.client.on("message_create", async (msg) => {
+      const groupId = [msg.from, msg.to].find((id) => id?.endsWith("@g.us"));
+      if (!groupId || this.seenGroups.has(groupId)) return;
       try {
         const chat = await msg.getChat();
-        this.seenGroups.set(msg.from, chat.name);
+        this.seenGroups.set(groupId, chat.name);
       } catch (err) {
         // Name lookup can hit the same WhatsApp Web fragility as getChats() —
         // fall back to just the ID so the group is still discoverable.
-        this.seenGroups.set(msg.from, null);
+        this.seenGroups.set(groupId, null);
         console.error("[whatsappService] chat name lookup failed:", err.message);
       }
     });
