@@ -40,6 +40,11 @@ class WhatsAppService extends EventEmitter {
     this.status = "DISCONNECTED"; // DISCONNECTED | QR | AUTHENTICATED | READY | AUTH_FAILURE
     this.qrDataUrl = null;
     this.client = null;
+    // group JID -> name, filled in as messages arrive. getChats() evaluates WhatsApp
+    // Web's own (frequently-changing, minified) internal JS and breaks unpredictably;
+    // reading IDs off the already-hydrated Message objects from the "message" event
+    // avoids that entirely.
+    this.seenGroups = new Map();
   }
 
   init() {
@@ -80,6 +85,20 @@ class WhatsAppService extends EventEmitter {
       this.emit("status", this.status);
     });
 
+    this.client.on("message", async (msg) => {
+      if (!msg.from.endsWith("@g.us")) return;
+      if (this.seenGroups.has(msg.from)) return;
+      try {
+        const chat = await msg.getChat();
+        this.seenGroups.set(msg.from, chat.name);
+      } catch (err) {
+        // Name lookup can hit the same WhatsApp Web fragility as getChats() —
+        // fall back to just the ID so the group is still discoverable.
+        this.seenGroups.set(msg.from, null);
+        console.error("[whatsappService] chat name lookup failed:", err.message);
+      }
+    });
+
     this.client.initialize().catch((err) => {
       console.error("[whatsappService] initialize failed:", err.message);
       this.status = "AUTH_FAILURE";
@@ -99,15 +118,10 @@ class WhatsAppService extends EventEmitter {
   }
 
   // WhatsApp's own UI never shows a group's internal ID — this is the only way to
-  // find the value that belongs in a School's groupId field.
-  async listGroups() {
-    if (this.status !== "READY") {
-      throw new Error(`WhatsApp is not connected (status: ${this.status}).`);
-    }
-    const chats = await this.client.getChats();
-    return chats
-      .filter((chat) => chat.isGroup)
-      .map((chat) => ({ id: chat.id._serialized, name: chat.name }));
+  // find the value that belongs in a School's groupId field. Populated from the
+  // "message" event (see init()) rather than getChats(), which is unreliable.
+  listGroups() {
+    return [...this.seenGroups.entries()].map(([id, name]) => ({ id, name }));
   }
 }
 

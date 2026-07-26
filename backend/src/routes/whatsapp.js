@@ -8,16 +8,11 @@ whatsappRouter.get("/status", (req, res) => {
   res.json(whatsappService.getStatus());
 });
 
-// WhatsApp's own app never exposes a group's internal ID, so this is the only way
-// to find the value that belongs in a School's groupId field.
-whatsappRouter.get("/groups", async (req, res) => {
-  try {
-    const groups = await whatsappService.listGroups();
-    res.json({ groups });
-  } catch (err) {
-    console.error("[whatsapp/groups] failed:", err);
-    res.status(503).json({ error: err.message || String(err) });
-  }
+// WhatsApp's own app never exposes a group's internal ID. Groups only show up here
+// once a message has been sent/received in them since this backend connected — send
+// a test message in a group first if it's not showing up yet.
+whatsappRouter.get("/groups", (req, res) => {
+  res.json({ groups: whatsappService.listGroups() });
 });
 
 // Step 4 "Send Now" broadcast: send one message to all groups (or a chosen subset)
