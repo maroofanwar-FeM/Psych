@@ -3,7 +3,7 @@ Exploring the intersection of AI, Automation and human thinking
 
 ## CoachConnect
 
-WhatsApp automation app for Maroof Anwar's 9 NIETE school groups. See `notes/planning.md`
+WhatsApp automation app for Maroof Anwar's NIETE school groups. See `notes/planning.md`
 for the full plan and `structure.md` for the repo layout.
 
 ### Local development

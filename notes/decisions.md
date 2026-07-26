@@ -91,7 +91,7 @@
 
 **Ruled out:**
 - Plain HTML/CSS/JS frontend — rejected in favor of React for maintainability as the feature set grows toward Step 5.
-- PostgreSQL now — rejected as unnecessary setup overhead for a single coach at 9 schools.
+- PostgreSQL now — rejected as unnecessary setup overhead for a single coach with a handful of schools.
 - Stubbing the WhatsApp layer behind a mock — rejected because a fake sender would leave the app's actual reason for existing untested; the real integration was built instead (it still needs a phone to scan the QR code, which no agent can do).
 
 ---

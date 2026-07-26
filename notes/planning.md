@@ -2,14 +2,14 @@
 
 > A tool that sends the right WhatsApp message to the right school group at the right time — automatically.
 >
-> **For:** Maroof Anwar, CPD Coach (9 schools)
+> **For:** Maroof Anwar, CPD Coach
 > **Created:** 2026-06-10
 
 ---
 
 ## The Idea in One Line
 
-Set up your messages and timings once. CoachConnect sends them to your 9 school groups for you — reminders, motivation, follow-ups — so you don't have to.
+Set up your messages and timings once. CoachConnect sends them to your school groups for you — reminders, motivation, follow-ups — so you don't have to.
 
 ---
 
@@ -27,7 +27,7 @@ That's it. The plan below is built around staying safe.
 
 ### Step 1 — Get Ready
 - Get a **cheap second SIM** = your "CoachConnect number."
-- Add that number to all 9 school groups.
+- Add that number to all your school groups.
 - Write down your plan in plain words, e.g.:
   - *Monday 8am* → motivation
   - *Day before a session* → reminder
@@ -56,7 +56,7 @@ This turns the spreadsheet setup into a proper website you log into.
 The app will let you:
 - **Log in.**
 - **Connect WhatsApp** (scan a QR code, like WhatsApp Web).
-- **Add your 9 schools** and their groups.
+- **Add your schools** and their groups.
 - **Save your messages** as reusable templates.
 - **Set your schedule** ("Every Monday 8am, send motivation to all groups").
 - **See what was sent** and whether WhatsApp is still connected.

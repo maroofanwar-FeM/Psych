@@ -1,6 +1,6 @@
 ---
 name: draft-message
-description: Draft warm, human WhatsApp message variants for CoachConnect's 9 school groups (Monday motivation, session reminders, thank-you follow-ups). Use whenever a message needs writing, whether invoked directly or from another agent.
+description: Draft warm, human WhatsApp message variants for CoachConnect's school groups (Monday motivation, session reminders, thank-you follow-ups). Use whenever a message needs writing, whether invoked directly or from another agent.
 ---
 
 # Draft Message

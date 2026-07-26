@@ -1,5 +1,5 @@
 // CoachConnect data model.
-// SQLite now (single coach, 9 schools); swap the datasource to Postgres
+// SQLite now (single coach, small number of schools); swap the datasource to Postgres
 // when Step 5 (multi-coach) happens — Prisma migrations carry over.
 
 generator client {

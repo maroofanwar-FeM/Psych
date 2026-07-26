@@ -1,7 +1,7 @@
 # CLAUDE.md — CoachConnect
 
 ## Purpose
-Automatically sends scheduled WhatsApp messages to 9 NIETE school groups for CPD Coach Maroof Anwar.
+Automatically sends scheduled WhatsApp messages to NIETE school groups for CPD Coach Maroof Anwar.
 
 ## Rules — never break
 - Never use the personal WhatsApp number — only the dedicated CoachConnect SIM.

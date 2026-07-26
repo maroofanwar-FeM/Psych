@@ -18,7 +18,7 @@ This folder holds rules and guidance for AI agents working on CoachConnect. File
 
 The key rules from `instructions/CLAUDE.md`:
 
-**Purpose:** CoachConnect automatically sends scheduled WhatsApp messages to 9 NIETE school groups for Maroof Anwar.
+**Purpose:** CoachConnect automatically sends scheduled WhatsApp messages to NIETE school groups for Maroof Anwar.
 
 **Hard rules:**
 - Never use the personal WhatsApp number — only the dedicated CoachConnect SIM.

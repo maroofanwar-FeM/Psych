@@ -16,7 +16,7 @@ next?" — it exists so he never has to manually cross-reference the issue track
 against the project plan himself.
 
 ### `message-drafter`
-Writes warm, human WhatsApp message variants for Maroof's 9 school groups (Monday
+Writes warm, human WhatsApp message variants for Maroof's school groups (Monday
 motivation, session reminders, thank-you follow-ups), producing 2–3 variants per
 request. Its tone rules and message-type definitions live in the `draft-message` skill
 (`.claude/skills/draft-message/SKILL.md`) so the agent and the app's own AI draft

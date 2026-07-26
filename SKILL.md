@@ -2,7 +2,7 @@
 
 ## What This Project Is
 
-CoachConnect is a WhatsApp automation tool for **Maroof Anwar**, a CPD Coach at NIETE who manages 9 school groups. The goal: send the right message (Monday motivation, session reminder, thank-you follow-up) to the right group at the right time — automatically, without manual effort.
+CoachConnect is a WhatsApp automation tool for **Maroof Anwar**, a CPD Coach at NIETE who manages school groups. The goal: send the right message (Monday motivation, session reminder, thank-you follow-up) to the right group at the right time — automatically, without manual effort.
 
 This now includes a real application codebase (`backend/` + `frontend/`) alongside the no-code Make.com proof — see below.
 
@@ -12,7 +12,7 @@ This now includes a real application codebase (`backend/` + `frontend/`) alongsi
 
 | Step | Description | Status |
 |---|---|---|
-| 1 | Get spare SIM, add to 9 school WhatsApp groups | Open |
+| 1 | Get spare SIM, add to school WhatsApp groups | Open |
 | 2 | Prove automation with Make.com + Google Sheets | **In Progress** |
 | 3 | Build real web app (login, QR, schedule, templates) | **Scaffolded** — `backend/` (Express+Prisma/SQLite+whatsapp-web.js) and `frontend/` (React+Vite) exist and run; still needs the spare-SIM QR scan (Step 1) to actually go live |
 | 4 | Add AI message drafting + broadcast button | **Scaffolded** — AI draft helper (Templates page) and Send Now (Dashboard) are built |
@@ -76,7 +76,7 @@ bd prime                  # Full workflow context (run at session start)
 ```
 
 **Open issues as of 2026-06-29:**
-- `coach-connect-3l7` — Get spare SIM, add to 9 school groups (priority 2)
+- `coach-connect-3l7` — Get spare SIM, add to school groups (priority 2)
 - `coach-connect-b2q` — Build message schedule in Google Sheets (priority 2)
 - `coach-connect-sa2` — Try Make.com automation (**in progress**, priority 2)
 - `coach-connect-az9` — Write message templates (priority 3)
