@@ -2,6 +2,33 @@
 
 This project uses **bd** (beads) for issue tracking. Run `bd prime` for full workflow context.
 
+## Project Agents
+
+CoachConnect defines three autonomous agents under `.claude/agents/`, each scoped to a
+recurring task so it doesn't need to be re-explained every session:
+
+### `issue-triage`
+Reads `.beads/issues.jsonl`, `notes/planning.md`, `notes/memory.md`, and
+`notes/decisions.md`, then produces a short status brief: current phase, what's in
+progress, what's open (by priority), what's blocked, and **one** recommended next
+action. Used at the start of a session, or whenever Maroof asks "what should I work on
+next?" — it exists so he never has to manually cross-reference the issue tracker
+against the project plan himself.
+
+### `message-drafter`
+Writes warm, human WhatsApp message variants for Maroof's 9 school groups (Monday
+motivation, session reminders, thank-you follow-ups), producing 2–3 variants per
+request. Its tone rules and message-type definitions live in the `draft-message` skill
+(`.claude/skills/draft-message/SKILL.md`) so the agent and the app's own AI draft
+helper share one source of truth instead of duplicating the rules.
+
+### `session-closer`
+Runs the mandatory end-of-session checklist: reviews what changed, files bd issues for
+anything left unfinished, closes completed work, logs a lesson to `notes/memory.md`
+(and a decision to `notes/decisions.md` via the `log-decision` skill, if one was made),
+commits, and pushes — refusing to consider a session "done" until `git push` actually
+succeeds. This is the agent that enforces the Session Completion rules below.
+
 > **Architecture in one line:** Issues live in a local Dolt database
 > (`.beads/dolt/`); cross-machine sync uses `bd dolt push/pull` (a
 > git-compatible protocol), stored under `refs/dolt/data` on your git
