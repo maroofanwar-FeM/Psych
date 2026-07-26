@@ -15,7 +15,8 @@ whatsappRouter.get("/groups", async (req, res) => {
     const groups = await whatsappService.listGroups();
     res.json({ groups });
   } catch (err) {
-    res.status(503).json({ error: err.message });
+    console.error("[whatsapp/groups] failed:", err);
+    res.status(503).json({ error: err.message || String(err) });
   }
 });
 
