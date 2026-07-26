@@ -97,6 +97,18 @@ class WhatsAppService extends EventEmitter {
     }
     return this.client.sendMessage(groupId, message);
   }
+
+  // WhatsApp's own UI never shows a group's internal ID — this is the only way to
+  // find the value that belongs in a School's groupId field.
+  async listGroups() {
+    if (this.status !== "READY") {
+      throw new Error(`WhatsApp is not connected (status: ${this.status}).`);
+    }
+    const chats = await this.client.getChats();
+    return chats
+      .filter((chat) => chat.isGroup)
+      .map((chat) => ({ id: chat.id._serialized, name: chat.name }));
+  }
 }
 
 export const whatsappService = new WhatsAppService();

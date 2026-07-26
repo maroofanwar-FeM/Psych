@@ -8,6 +8,17 @@ whatsappRouter.get("/status", (req, res) => {
   res.json(whatsappService.getStatus());
 });
 
+// WhatsApp's own app never exposes a group's internal ID, so this is the only way
+// to find the value that belongs in a School's groupId field.
+whatsappRouter.get("/groups", async (req, res) => {
+  try {
+    const groups = await whatsappService.listGroups();
+    res.json({ groups });
+  } catch (err) {
+    res.status(503).json({ error: err.message });
+  }
+});
+
 // Step 4 "Send Now" broadcast: send one message to all groups (or a chosen subset)
 // right away, staggered so it doesn't look automated.
 whatsappRouter.post("/send-now", async (req, res) => {
