@@ -1,14 +1,15 @@
 // CoachConnect data model.
-// SQLite now (single coach, small number of schools); swap the datasource to Postgres
-// when Step 5 (multi-coach) happens — Prisma migrations carry over.
+// Postgres (Neon) — DATABASE_URL is the pooled connection (app runtime),
+// DIRECT_URL is the unpooled connection (migrations only).
 
 generator client {
   provider = "prisma-client-js"
 }
 
 datasource db {
-  provider = "sqlite"
-  url      = env("DATABASE_URL")
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")
 }
 
 model User {
