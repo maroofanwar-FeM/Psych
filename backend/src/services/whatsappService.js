@@ -54,7 +54,28 @@ class WhatsAppService extends EventEmitter {
 
     this.client = new Client({
       authStrategy: new LocalAuth({ dataPath: AUTH_DATA_PATH }),
-      puppeteer: { headless: true, args: ["--no-sandbox", "--disable-setuid-sandbox"] },
+      puppeteer: {
+        headless: true,
+        args: [
+          "--no-sandbox",
+          "--disable-setuid-sandbox",
+          // Containers default to a tiny (64MB) /dev/shm, which Chromium relies on
+          // heavily — without this it crashes randomly under any real memory
+          // pressure, which is exactly what a 512MB free-tier host runs into.
+          "--disable-dev-shm-usage",
+          "--disable-gpu",
+          "--disable-software-rasterizer",
+          "--disable-extensions",
+          "--disable-background-networking",
+          "--disable-default-apps",
+          "--disable-sync",
+          "--disable-translate",
+          "--metrics-recording-only",
+          "--mute-audio",
+          "--no-first-run",
+          "--safebrowsing-disable-auto-update",
+        ],
+      },
     });
 
     this.client.on("qr", async (qr) => {
