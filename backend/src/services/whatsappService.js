@@ -60,6 +60,15 @@ class WhatsAppService extends EventEmitter {
               this.status = "READY";
               this.qrDataUrl = null;
               this.emit("status", this.status);
+              // Belt-and-suspenders: "open" is a sure sign pairing succeeded, so save
+              // here regardless of whether creds.update already fired on its own —
+              // guarantees at least one persisted snapshot per successful connection.
+              try {
+                await saveCreds();
+                console.log("[whatsappService] session saved to DB (on connection open)");
+              } catch (err) {
+                console.error("[whatsappService] saveCreds (on open) failed:", err);
+              }
             }
 
             if (connection === "close") {
