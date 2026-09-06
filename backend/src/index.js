@@ -31,7 +31,13 @@ app.use(cors({ origin: process.env.FRONTEND_ORIGIN, credentials: true }));
 app.use(express.json());
 app.use(cookieParser());
 
-app.get("/api/health", (req, res) => res.json({ ok: true }));
+// Includes the deployed commit SHA (Render sets this automatically) so we can
+// verify from outside which exact build is actually live after a deploy, rather
+// than assuming a 200 here means the newest code is running (Render can keep
+// serving the previous instance while a new build is still in progress).
+app.get("/api/health", (req, res) =>
+  res.json({ ok: true, commit: process.env.RENDER_GIT_COMMIT || null })
+);
 
 app.use("/api/auth", authRouter);
 app.use("/api/schools", requireAuth, schoolsRouter);
