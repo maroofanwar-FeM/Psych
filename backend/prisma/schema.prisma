@@ -67,3 +67,11 @@ model MessageLog {
   sentAt     DateTime  @default(now())
   triggeredBy String   // "schedule" | "send-now"
 }
+
+// Baileys' WhatsApp session (creds + signal keys) as key/value blobs — see
+// src/services/baileysAuthState.js. Stored here instead of local disk so the
+// session survives host restarts/redeploys on free tiers with no persistent disk.
+model WhatsappAuthState {
+  key   String @id
+  value Json
+}

@@ -1,16 +1,14 @@
 import { EventEmitter } from "node:events";
-import path from "node:path";
-import { fileURLToPath } from "node:url";
 import QRCode from "qrcode";
 import pino from "pino";
-import makeWASocket, { useMultiFileAuthState, DisconnectReason } from "@whiskeysockets/baileys";
-
-const __dirname = path.dirname(fileURLToPath(import.meta.url));
-const AUTH_DATA_PATH = path.join(__dirname, "..", "..", "data", "baileys_auth");
+import makeWASocket, { DisconnectReason } from "@whiskeysockets/baileys";
+import { useDBAuthState } from "./baileysAuthState.js";
 
 // Baileys drives the WhatsApp multi-device protocol directly over a WebSocket —
 // no browser/Chromium involved (unlike the whatsapp-web.js this replaced), which is
 // what makes this reliable to run on a low-memory (e.g. 512MB free tier) host.
+// Session state is persisted to Postgres (see baileysAuthState.js) rather than local
+// disk, so it survives restarts/redeploys on hosts with no persistent disk.
 const logger = pino({ level: "silent" });
 
 // Never send from a personal number — this session must only ever be scanned in with
@@ -29,7 +27,7 @@ class WhatsAppService extends EventEmitter {
     if (this.sock) return;
 
     try {
-      const { state, saveCreds } = await useMultiFileAuthState(AUTH_DATA_PATH);
+      const { state, saveCreds } = await useDBAuthState();
 
       this.sock = makeWASocket({ auth: state, logger });
 
