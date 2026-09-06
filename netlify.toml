@@ -3,6 +3,15 @@
   command = "npm run build"
   publish = "frontend/dist"
 
+# Proxy API calls to the Render backend so the browser sees everything as one
+# origin (netlify.app) — avoids cross-site/third-party cookie blocking for the
+# session cookie. Must come before the SPA catch-all below.
+[[redirects]]
+  from = "/api/*"
+  to = "https://coachconnect-backend-c3jx.onrender.com/api/:splat"
+  status = 200
+  force = true
+
 # Client-side routing (react-router-dom) - let index.html handle all paths
 [[redirects]]
   from = "/*"
