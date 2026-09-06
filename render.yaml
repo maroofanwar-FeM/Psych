@@ -10,6 +10,8 @@ services:
     envVars:
       - key: PORT
         value: 4000
+      - key: NODE_OPTIONS
+        value: "--max-old-space-size=200"
       - key: COOKIE_CROSS_ORIGIN
         value: "true"
       - key: DATABASE_URL

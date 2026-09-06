@@ -74,6 +74,18 @@ class WhatsAppService extends EventEmitter {
           "--mute-audio",
           "--no-first-run",
           "--safebrowsing-disable-auto-update",
+          "--disable-backgrounding-occluded-windows",
+          "--disable-renderer-backgrounding",
+          "--disable-background-timer-throttling",
+          "--disable-ipc-flooding-protection",
+          "--disable-accelerated-2d-canvas",
+          "--no-zygote",
+          // Merges the browser + renderer into one OS process instead of forking a
+          // separate renderer — the single biggest lever left for a 512MB host,
+          // at some cost to Chromium's normal crash-isolation.
+          "--single-process",
+          // Cap V8's heap so Chromium can't quietly balloon past what the host has.
+          "--js-flags=--max-old-space-size=200",
         ],
       },
     });
