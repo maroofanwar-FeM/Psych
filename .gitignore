@@ -7,5 +7,8 @@
 # App (backend + frontend)
 node_modules/
 .env
-backend/data/wwebjs_auth/
+backend/data/baileys_auth/
 frontend/dist/
+
+# Local Netlify folder
+.netlify

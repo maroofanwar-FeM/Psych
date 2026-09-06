@@ -13,6 +13,7 @@
   "dependencies": {
     "@anthropic-ai/sdk": "^0.32.1",
     "@prisma/client": "^5.20.0",
+    "@whiskeysockets/baileys": "^7.0.0-rc14",
     "bcryptjs": "^2.4.3",
     "cookie-parser": "^1.4.6",
     "cors": "^2.8.5",
@@ -20,8 +21,8 @@
     "express": "^4.21.0",
     "jsonwebtoken": "^9.0.2",
     "node-cron": "^3.0.3",
-    "qrcode": "^1.5.4",
-    "whatsapp-web.js": "^1.26.0"
+    "pino": "^10.3.1",
+    "qrcode": "^1.5.4"
   },
   "devDependencies": {
     "prisma": "^5.20.0"
