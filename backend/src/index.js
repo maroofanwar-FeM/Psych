@@ -15,6 +15,16 @@ import { bootstrapAdmin } from "./services/bootstrapAdmin.js";
 import { startScheduler } from "./services/scheduler.js";
 import { whatsappService } from "./services/whatsappService.js";
 
+// Safety net: an async event listener that throws (e.g. inside whatsappService's
+// Baileys handlers) becomes an unhandled rejection, and Node terminates the whole
+// process on those by default — silently losing state (like an unsaved WhatsApp
+// session) with it. Log instead of dying; every call site we control already has
+// its own try/catch, so anything reaching here is unexpected and worth knowing
+// about without taking the backend down for it.
+process.on("unhandledRejection", (err) => {
+  console.error("[unhandledRejection]", err);
+});
+
 const app = express();
 
 app.use(cors({ origin: process.env.FRONTEND_ORIGIN, credentials: true }));

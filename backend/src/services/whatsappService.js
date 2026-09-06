@@ -31,57 +31,83 @@ class WhatsAppService extends EventEmitter {
 
       this.sock = makeWASocket({ auth: state, logger });
 
-      this.sock.ev.on("creds.update", saveCreds);
+      // Event listeners here are called by Baileys without anyone awaiting or
+      // catching their returned promises — an async listener that throws becomes an
+      // unhandled rejection, and Node terminates the process by default on those.
+      // Every listener below is wrapped so a failure just logs instead of killing
+      // the whole backend (which was silently losing the session before it could
+      // even get saved).
+      this.sock.ev.on("creds.update", () => {
+        console.log("[whatsappService] creds.update fired — saving session to DB");
+        saveCreds()
+          .then(() => console.log("[whatsappService] session saved to DB"))
+          .catch((err) => console.error("[whatsappService] saveCreds failed:", err));
+      });
 
-      this.sock.ev.on("connection.update", async (update) => {
-        const { connection, lastDisconnect, qr } = update;
+      this.sock.ev.on("connection.update", (update) => {
+        Promise.resolve()
+          .then(async () => {
+            const { connection, lastDisconnect, qr } = update;
+            console.log("[whatsappService] connection.update:", connection ?? "(qr)");
 
-        if (qr) {
-          this.status = "QR";
-          this.qrDataUrl = await QRCode.toDataURL(qr);
-          this.emit("status", this.status);
-        }
+            if (qr) {
+              this.status = "QR";
+              this.qrDataUrl = await QRCode.toDataURL(qr);
+              this.emit("status", this.status);
+            }
 
-        if (connection === "open") {
-          this.status = "READY";
-          this.qrDataUrl = null;
-          this.emit("status", this.status);
-        }
+            if (connection === "open") {
+              this.status = "READY";
+              this.qrDataUrl = null;
+              this.emit("status", this.status);
+            }
 
-        if (connection === "close") {
-          const statusCode = lastDisconnect?.error?.output?.statusCode;
-          const loggedOut = statusCode === DisconnectReason.loggedOut;
-          this.status = loggedOut ? "AUTH_FAILURE" : "DISCONNECTED";
-          this.qrDataUrl = null;
-          this.emit("status", this.status);
-          this.sock = null;
+            if (connection === "close") {
+              const statusCode = lastDisconnect?.error?.output?.statusCode;
+              const loggedOut = statusCode === DisconnectReason.loggedOut;
+              console.log(
+                "[whatsappService] connection closed, statusCode:",
+                statusCode,
+                "loggedOut:",
+                loggedOut
+              );
+              this.status = loggedOut ? "AUTH_FAILURE" : "DISCONNECTED";
+              this.qrDataUrl = null;
+              this.emit("status", this.status);
+              this.sock = null;
 
-          // Any close reason other than an explicit logout (dropped connection,
-          // "restart required", etc.) is recoverable — reconnect on our own rather
-          // than forcing a fresh QR scan every time.
-          if (!loggedOut) {
-            this.init().catch((err) =>
-              console.error("[whatsappService] reconnect failed:", err.message)
-            );
-          }
-        }
+              // Any close reason other than an explicit logout (dropped connection,
+              // "restart required", etc.) is recoverable — reconnect on our own
+              // rather than forcing a fresh QR scan every time.
+              if (!loggedOut) {
+                this.init().catch((err) =>
+                  console.error("[whatsappService] reconnect failed:", err.message)
+                );
+              }
+            }
+          })
+          .catch((err) => console.error("[whatsappService] connection.update handler failed:", err));
       });
 
       // Discover group IDs/names from any message seen in a group. groupMetadata()
       // is a direct protocol call — more reliable than scraping WhatsApp Web's own
       // (frequently-changing) internal JS the way whatsapp-web.js's getChats() did.
-      this.sock.ev.on("messages.upsert", async ({ messages }) => {
-        for (const msg of messages) {
-          const groupId = msg.key?.remoteJid;
-          if (!groupId?.endsWith("@g.us") || this.seenGroups.has(groupId)) continue;
-          try {
-            const metadata = await this.sock.groupMetadata(groupId);
-            this.seenGroups.set(groupId, metadata.subject);
-          } catch (err) {
-            this.seenGroups.set(groupId, null);
-            console.error("[whatsappService] group metadata lookup failed:", err.message);
-          }
-        }
+      this.sock.ev.on("messages.upsert", ({ messages }) => {
+        Promise.resolve()
+          .then(async () => {
+            for (const msg of messages) {
+              const groupId = msg.key?.remoteJid;
+              if (!groupId?.endsWith("@g.us") || this.seenGroups.has(groupId)) continue;
+              try {
+                const metadata = await this.sock.groupMetadata(groupId);
+                this.seenGroups.set(groupId, metadata.subject);
+              } catch (err) {
+                this.seenGroups.set(groupId, null);
+                console.error("[whatsappService] group metadata lookup failed:", err.message);
+              }
+            }
+          })
+          .catch((err) => console.error("[whatsappService] messages.upsert handler failed:", err));
       });
     } catch (err) {
       console.error("[whatsappService] initialize failed:", err.message);
