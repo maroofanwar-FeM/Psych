@@ -1,5 +1,13 @@
 FROM node:20-slim
 
+# Prisma's migrate/schema engines shell out to `openssl` to detect the
+# installed OpenSSL version and pick a matching engine binary. Without it,
+# Prisma guesses wrong (defaults to openssl-1.1.x, which isn't on this
+# Debian image — 3.0.x is), downloads/uses the wrong binary, and it fails
+# to start with an empty "Schema engine error" on every migrate deploy.
+RUN apt-get update && apt-get install -y openssl --no-install-recommends \
+    && rm -rf /var/lib/apt/lists/*
+
 WORKDIR /app
 
 COPY package*.json ./
@@ -14,9 +22,4 @@ RUN mkdir -p data
 
 EXPOSE 4000
 
-# Neon's DB suspends when idle and takes a moment to wake on the first
-# connection — migrate deploy hits DIRECT_URL (unpooled), which has no
-# retry buffer, so a cold start can fail outright and (via &&) kill the
-# whole container before node ever starts. Retry a few times before
-# giving up so a cold start doesn't take the deploy down with it.
-CMD ["sh", "-c", "n=0; until npx prisma migrate deploy; do n=$((n+1)); if [ $n -ge 5 ]; then echo 'prisma migrate deploy failed after 5 attempts'; exit 1; fi; echo \"migrate deploy failed (attempt $n/5), retrying in 5s...\"; sleep 5; done; node src/index.js"]
+CMD ["sh", "-c", "npx prisma migrate deploy && node src/index.js"]
