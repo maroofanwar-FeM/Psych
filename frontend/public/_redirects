@@ -1,0 +1,7 @@
+# Mirrors netlify.toml's redirects as a belt-and-suspenders: netlify.toml is only
+# applied when Netlify runs its own build from the connected repo. A manual/API
+# deploy of a pre-built dist/ skips that processing entirely, so without this file
+# living inside dist/ (Vite copies public/ verbatim), /api/* has nowhere to go and
+# every request from the frontend 404s — including login.
+/api/*  https://coachconnect-backend-c3jx.onrender.com/api/:splat  200!
+/*      /index.html                                                200
