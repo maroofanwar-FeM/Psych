@@ -25,6 +25,13 @@ process.on("unhandledRejection", (err) => {
   console.error("[unhandledRejection]", err);
 });
 
+// Same rationale as unhandledRejection above, but for synchronous throws that
+// escape every try/catch — without this, one of those still takes the whole
+// backend down instead of just logging.
+process.on("uncaughtException", (err) => {
+  console.error("[uncaughtException]", err);
+});
+
 const app = express();
 
 app.use(cors({ origin: process.env.FRONTEND_ORIGIN, credentials: true }));
