@@ -50,7 +50,7 @@ model ScheduleEntry {
   schoolId   Int?     // null = all schools
   school     School?  @relation(fields: [schoolId], references: [id], onDelete: Cascade)
   dayOfWeek  Int      // 0=Sunday .. 6=Saturday
-  hour       Int      // 0-23, local server time
+  hour       Int      // 0-23, Pakistan time (Asia/Karachi) — see scheduler.js
   minute     Int      @default(0)
   active     Boolean  @default(true)
   createdAt  DateTime @default(now())

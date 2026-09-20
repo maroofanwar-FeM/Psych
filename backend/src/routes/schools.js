@@ -13,7 +13,12 @@ schoolsRouter.post("/", asyncHandler(async (req, res) => {
   const { name, groupId } = req.body ?? {};
   if (!name) return res.status(400).json({ error: "School name is required." });
 
-  const school = await prisma.school.create({ data: { name, groupId: groupId || null } });
+  // Copy-pasting a group ID from WhatsApp/the Dashboard table can drag in a
+  // leading/trailing tab or space, which then silently fails to match the
+  // real group JID at send time — trim it so that can't happen.
+  const school = await prisma.school.create({
+    data: { name, groupId: groupId?.trim() || null },
+  });
   res.status(201).json(school);
 }));
 
@@ -25,7 +30,7 @@ schoolsRouter.patch("/:id", asyncHandler(async (req, res) => {
     where: { id },
     data: {
       ...(name !== undefined ? { name } : {}),
-      ...(groupId !== undefined ? { groupId: groupId || null } : {}),
+      ...(groupId !== undefined ? { groupId: groupId?.trim() || null } : {}),
     },
   });
   res.json(school);
