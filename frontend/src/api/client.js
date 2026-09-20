@@ -44,6 +44,7 @@ export const api = {
   deleteScheduleEntry: (id) => request(`/schedule/${id}`, { method: "DELETE" }),
 
   getWhatsappStatus: () => request("/whatsapp/status"),
+  getWhatsappGroups: () => request("/whatsapp/groups"),
   sendNow: (data) => request("/whatsapp/send-now", { method: "POST", body: JSON.stringify(data) }),
 
   draftMessage: (data) => request("/messages/draft", { method: "POST", body: JSON.stringify(data) }),

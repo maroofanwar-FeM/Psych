@@ -11,6 +11,8 @@ const STATUS_LABELS = {
 
 export default function Dashboard() {
   const [status, setStatus] = useState(null);
+  const [groups, setGroups] = useState([]);
+  const [copiedId, setCopiedId] = useState(null);
   const [sendBody, setSendBody] = useState("");
   const [sending, setSending] = useState(false);
   const [result, setResult] = useState(null);
@@ -25,6 +27,12 @@ export default function Dashboard() {
       } catch {
         // status polling failures are quiet — the pill just won't update this tick
       }
+      try {
+        const { groups } = await api.getWhatsappGroups();
+        if (!cancelled) setGroups(groups);
+      } catch {
+        // same — the list just won't update this tick
+      }
     }
     poll();
     const interval = setInterval(poll, 4000);
@@ -33,6 +41,12 @@ export default function Dashboard() {
       clearInterval(interval);
     };
   }, []);
+
+  async function handleCopy(id) {
+    await navigator.clipboard.writeText(id);
+    setCopiedId(id);
+    setTimeout(() => setCopiedId(null), 1500);
+  }
 
   async function handleSendNow(e) {
     e.preventDefault();
@@ -72,6 +86,41 @@ export default function Dashboard() {
         )}
         {status?.status === "DISCONNECTED" && (
           <p className="empty-state">Waiting for the backend to generate a QR code...</p>
+        )}
+      </div>
+
+      <div className="card">
+        <h2>Discovered WhatsApp Groups</h2>
+        <p className="empty-state">
+          WhatsApp never shows a group's internal ID — it only appears here once a message
+          has been sent or received in that group since the connection opened. If a school's
+          group isn't listed yet, send any message in that group first, then check back.
+        </p>
+        {groups.length === 0 ? (
+          <p className="empty-state">No groups seen yet.</p>
+        ) : (
+          <table>
+            <thead>
+              <tr>
+                <th>Group name</th>
+                <th>Group ID</th>
+                <th></th>
+              </tr>
+            </thead>
+            <tbody>
+              {groups.map((g) => (
+                <tr key={g.id}>
+                  <td>{g.name ?? "(name not seen yet)"}</td>
+                  <td><code>{g.id}</code></td>
+                  <td className="row-actions">
+                    <button type="button" className="secondary" onClick={() => handleCopy(g.id)}>
+                      {copiedId === g.id ? "Copied!" : "Copy ID"}
+                    </button>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
         )}
       </div>
 
