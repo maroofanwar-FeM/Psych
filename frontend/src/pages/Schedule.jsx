@@ -54,8 +54,13 @@ export default function Schedule() {
 
   async function handleDelete(entry) {
     if (!window.confirm("Remove this scheduled send? This cannot be undone.")) return;
-    await api.deleteScheduleEntry(entry.id);
-    await load();
+    setError(null);
+    try {
+      await api.deleteScheduleEntry(entry.id);
+      await load();
+    } catch (err) {
+      setError(err.message);
+    }
   }
 
   return (

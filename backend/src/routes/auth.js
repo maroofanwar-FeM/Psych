@@ -3,6 +3,7 @@ import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
 import { prisma } from "../db/client.js";
 import { requireAuth } from "../middleware/auth.js";
+import { asyncHandler } from "../middleware/asyncHandler.js";
 
 export const authRouter = Router();
 
@@ -12,7 +13,7 @@ const COOKIE_NAME = "coachconnect_session";
 // Local dev stays same-origin (Vite's dev-server proxy), so it doesn't need this.
 const crossOrigin = process.env.COOKIE_CROSS_ORIGIN === "true";
 
-authRouter.post("/login", async (req, res) => {
+authRouter.post("/login", asyncHandler(async (req, res) => {
   const { email, password } = req.body ?? {};
   if (!email || !password) {
     return res.status(400).json({ error: "Email and password are required." });
@@ -34,7 +35,7 @@ authRouter.post("/login", async (req, res) => {
     maxAge: 30 * 24 * 60 * 60 * 1000,
   });
   res.json({ email: user.email });
-});
+}));
 
 authRouter.post("/logout", (req, res) => {
   res.clearCookie(COOKIE_NAME);

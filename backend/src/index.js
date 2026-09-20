@@ -54,8 +54,16 @@ app.use("/api/whatsapp", requireAuth, whatsappRouter);
 app.use("/api/messages", requireAuth, messagesRouter);
 app.use("/api/logs", requireAuth, logsRouter);
 
+// Common Prisma error codes get a specific message; anything else falls back to
+// generic. See https://www.prisma.io/docs/orm/reference/error-reference
 app.use((err, req, res, next) => {
   console.error(err);
+  if (err.code === "P2002") {
+    return res.status(409).json({ error: "That value is already in use." });
+  }
+  if (err.code === "P2025") {
+    return res.status(404).json({ error: "Not found." });
+  }
   res.status(500).json({ error: "Something went wrong." });
 });
 

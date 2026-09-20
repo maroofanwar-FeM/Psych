@@ -1,14 +1,15 @@
 import { Router } from "express";
 import { prisma } from "../db/client.js";
+import { asyncHandler } from "../middleware/asyncHandler.js";
 
 export const templatesRouter = Router();
 
-templatesRouter.get("/", async (req, res) => {
+templatesRouter.get("/", asyncHandler(async (req, res) => {
   const templates = await prisma.template.findMany({ orderBy: { createdAt: "desc" } });
   res.json(templates);
-});
+}));
 
-templatesRouter.post("/", async (req, res) => {
+templatesRouter.post("/", asyncHandler(async (req, res) => {
   const { title, occasion, body } = req.body ?? {};
   if (!title || !body) {
     return res.status(400).json({ error: "Title and message body are required." });
@@ -18,9 +19,9 @@ templatesRouter.post("/", async (req, res) => {
     data: { title, body, occasion: occasion || "CUSTOM" },
   });
   res.status(201).json(template);
-});
+}));
 
-templatesRouter.patch("/:id", async (req, res) => {
+templatesRouter.patch("/:id", asyncHandler(async (req, res) => {
   const id = Number(req.params.id);
   const { title, occasion, body } = req.body ?? {};
 
@@ -33,10 +34,12 @@ templatesRouter.patch("/:id", async (req, res) => {
     },
   });
   res.json(template);
-});
+}));
 
-templatesRouter.delete("/:id", async (req, res) => {
+// Cascades to the template's scheduleEntries (see schema.prisma) so this can't
+// fail with a dangling foreign key.
+templatesRouter.delete("/:id", asyncHandler(async (req, res) => {
   const id = Number(req.params.id);
   await prisma.template.delete({ where: { id } });
   res.status(204).end();
-});
+}));

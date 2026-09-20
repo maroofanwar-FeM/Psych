@@ -32,8 +32,13 @@ export default function Schools() {
     // CLAUDE.md: always ask before deleting a scheduled message or template — extend
     // the same courtesy to schools, since removing one drops its schedule/logs too.
     if (!window.confirm(`Remove "${school.name}"? This cannot be undone.`)) return;
-    await api.deleteSchool(school.id);
-    await load();
+    setError(null);
+    try {
+      await api.deleteSchool(school.id);
+      await load();
+    } catch (err) {
+      setError(err.message);
+    }
   }
 
   async function handleGroupIdChange(school, value) {

@@ -46,9 +46,9 @@ model Template {
 model ScheduleEntry {
   id         Int      @id @default(autoincrement())
   templateId Int
-  template   Template @relation(fields: [templateId], references: [id])
+  template   Template @relation(fields: [templateId], references: [id], onDelete: Cascade)
   schoolId   Int?     // null = all schools
-  school     School?  @relation(fields: [schoolId], references: [id])
+  school     School?  @relation(fields: [schoolId], references: [id], onDelete: Cascade)
   dayOfWeek  Int      // 0=Sunday .. 6=Saturday
   hour       Int      // 0-23, local server time
   minute     Int      @default(0)
@@ -60,7 +60,7 @@ model ScheduleEntry {
 model MessageLog {
   id         Int       @id @default(autoincrement())
   schoolId   Int
-  school     School    @relation(fields: [schoolId], references: [id])
+  school     School    @relation(fields: [schoolId], references: [id], onDelete: Cascade)
   body       String
   status     String
   error      String?

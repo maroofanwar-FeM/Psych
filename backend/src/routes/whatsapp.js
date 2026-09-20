@@ -1,6 +1,7 @@
 import { Router } from "express";
 import { prisma } from "../db/client.js";
 import { whatsappService, staggerDelay } from "../services/whatsappService.js";
+import { asyncHandler } from "../middleware/asyncHandler.js";
 
 export const whatsappRouter = Router();
 
@@ -17,7 +18,7 @@ whatsappRouter.get("/groups", (req, res) => {
 
 // Step 4 "Send Now" broadcast: send one message to all groups (or a chosen subset)
 // right away, staggered so it doesn't look automated.
-whatsappRouter.post("/send-now", async (req, res) => {
+whatsappRouter.post("/send-now", asyncHandler(async (req, res) => {
   const { body, schoolIds } = req.body ?? {};
   if (!body) return res.status(400).json({ error: "Message body is required." });
 
@@ -58,4 +59,4 @@ whatsappRouter.post("/send-now", async (req, res) => {
   }
 
   res.json({ results });
-});
+}));

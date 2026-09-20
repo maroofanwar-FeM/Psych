@@ -44,8 +44,13 @@ export default function Templates() {
   async function handleDelete(template) {
     // CLAUDE.md hard rule: never delete a template without asking first.
     if (!window.confirm(`Delete template "${template.title}"? This cannot be undone.`)) return;
-    await api.deleteTemplate(template.id);
-    await load();
+    setError(null);
+    try {
+      await api.deleteTemplate(template.id);
+      await load();
+    } catch (err) {
+      setError(err.message);
+    }
   }
 
   async function handleDraft() {
