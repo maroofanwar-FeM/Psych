@@ -1,0 +1,23 @@
+name: Keep backend awake
+
+# Render's free plan spins the backend down after 15 minutes with no incoming
+# web traffic — and once it's asleep, the WhatsApp connection drops and the
+# minute-by-minute schedule stops running (there's no request to wake it back
+# up for a cron job nobody outside is hitting). Ping it well under that
+# threshold so it never goes idle long enough to sleep.
+#
+# Note: GitHub's schedule can occasionally run a few minutes late under load,
+# so this is a best-effort mitigation, not a guarantee — see CLAUDE.md /
+# notes/decisions.md for the tradeoff against paying for Render's Starter
+# plan, which removes spin-down entirely.
+on:
+  schedule:
+    - cron: "*/10 * * * *"
+  workflow_dispatch: {}
+
+jobs:
+  ping:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Ping backend health endpoint
+        run: curl -sf https://coachconnect-backend-c3jx.onrender.com/api/health
